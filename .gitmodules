@@ -1,0 +1,3 @@
+[submodule "external-modules/rjsc-searchbox-timeout"]
+	path = external-modules/rjsc-searchbox-timeout
+	url = https://github.com/marianojwl/rjsc-searchbox-timeout.git
