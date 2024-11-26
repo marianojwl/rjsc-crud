@@ -7,13 +7,13 @@ import Form from './Form';
 
 export const ContextCrudApp3 = React.createContext();
 
-function Crud({queryFormatter=null, pagination=null, endpoint, tables, relations, columns, startOn='table', newFormPrefilledData={}, newFormCallbackOnInsertId=null,  overrideFormCloseHandler=null}) {
+function Crud({queryFormatter=null, order="ASC", orderBy=null, allowFilter=true, allowSearch=false, endpoint, tables, relations, columns, startOn='table', newFormPrefilledData={}, newFormCallbackOnInsertId=null,  overrideFormCloseHandler=null}) {
   
   const mainTablePrimaryKey = tables[0]?.columns.find(col => col?.Key === 'PRI')?.Field;
 
   const mainTableName = tables[0]?.table;
 
-  const [queryParameters, setQueryParameters] = React.useState({page:1, rowsPerPage:10, orderBy:mainTableName+'.'+mainTablePrimaryKey, orderAsc:true, search:''});
+  const [queryParameters, setQueryParameters] = React.useState({page:1, rowsPerPage:20, orderBy:(orderBy??(mainTableName+'.'+mainTablePrimaryKey)), order:order, search:''});
 
   const queryString = (queryFormatter ? queryFormatter(queryParameters) : (qp=>{ return "?" + Object.keys(qp).map(k=>k+"="+qp[k]).join("&") })(queryParameters));
 
@@ -32,7 +32,7 @@ function Crud({queryFormatter=null, pagination=null, endpoint, tables, relations
   const [editFormPrefilledData, setEditFormPrefilledData] = React.useState({});
 
   return ( (!endpoint || !tables?.length || !relations || !columns) ? <div>Bad Configuration</div> :
-    <ContextCrudApp3.Provider value={{setQueryParameters, endpoint, editFormPrefilledData, setEditFormPrefilledData, mainTablePrimaryKey, endpoint, tables, relations, columns, mainTableHook, relationHooks, setSection, selectedRows, setSelectedRows}}>
+    <ContextCrudApp3.Provider value={{allowFilter, allowSearch, queryParameters, setQueryParameters, endpoint, editFormPrefilledData, setEditFormPrefilledData, mainTablePrimaryKey, endpoint, tables, relations, columns, mainTableHook, relationHooks, setSection, selectedRows, setSelectedRows}}>
       <div className='CrudApp3'>
         { section === 'table' && <><ActionBar /><Table /></> }
         { section === 'new-form' && <><Form callbackOnId={newFormCallbackOnInsertId} preFilledFormData={newFormPrefilledData} reloadMainTable={mainTableHook.fetchData} closeHandler={()=>setSection('table')} /></> }

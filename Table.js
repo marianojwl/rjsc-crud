@@ -4,9 +4,10 @@ import Loading from './Loading';
 import TableCell from './TableCell';
 import FilterTextInput from './FilterTextInput';
 import SearchboxTimeout from './external-modules/rjsc-searchbox-timeout/SearchboxTimeout';
+import Pagination from './Pagination';
 
 function Table() {
-  const {setQueryParameters, endpoint, tables, relations, columns, mainTableHook, selectedRows, setSelectedRows} = React.useContext(ContextCrudApp3);
+  const {allowFilter, allowSearch, queryParameters, setQueryParameters, endpoint, tables, relations, columns, mainTableHook, selectedRows, setSelectedRows} = React.useContext(ContextCrudApp3);
   
   const rows = mainTableHook?.getResponse?.data?.rows;
 
@@ -42,23 +43,36 @@ function Table() {
   };
 
 
-  return ( mainTableHook?.loading ? <Loading /> :
+  return ( 
   <div>
     <div className='flex'>
-      <SearchboxTimeout value={searchText} setValue={setSearchText} placeholder='Buscar...' />
-      <FilterTextInput filterText={filterText} setFilterText={setFilterText} />
-      <div className='input-group my-2 w-auto d-inline-flex me-2'>
-        <label className='input-group-text'>Mostrando</label>
-        <input type="text" className='form-control' value={rowsShowing?.length+' de '+rows?.length+' registros'} disabled={true} />
-      </div>
-      { selectedRows?.length > 0 && 
-      <div className='input-group my-2 w-auto d-inline-flex'>
-        <label className='input-group-text'>Seleccionados</label>
-        <input type="text" className='form-control' value={selectedRows?.length+' de '+rows?.length+' registros'} disabled={true} />
-      </div>
+      { allowSearch &&
+        <SearchboxTimeout value={searchText} setValue={setSearchText} placeholder='Buscar...' />
       }
+
+      {
+        mainTableHook?.loading ? <Loading /> :<div>
+
+          <Pagination page={queryParameters.page} setPage={page=>setQueryParameters(prev=>({...prev, page}))} rowsPerPage={queryParameters.rowsPerPage} setRowsPerPage={rowsPerPage=>setQueryParameters(prev=>({...prev, rowsPerPage}))} totalRows={mainTableHook?.getResponse?.data?.totalRows} />
+          { allowFilter && <div className='mb-2'>
+            <FilterTextInput filterText={filterText} setFilterText={setFilterText} />
+            <div className='input-group my-2 w-auto d-inline-flex me-2'>
+              <label className='input-group-text'>Mostrando</label>
+              <input type="text" className='form-control' value={rowsShowing?.length+' de '+rows?.length+' registros'} disabled={true} />
+            </div>
+          </div>}
+          { selectedRows?.length > 0 && 
+          <div className='input-group my-2 w-auto d-inline-flex'>
+            <label className='input-group-text'>Seleccionados</label>
+            <input type="text" className='form-control' value={selectedRows?.length+' de '+rows?.length+' registros'} disabled={true} />
+          </div>
+          }
+        </div>
+      }
+     
     </div>
-    <div className='table-responsive'>
+    { mainTableHook?.loading ? <Loading /> : <>
+    <div className='table-responsive mt-2'>
       <table className='table table-striped table-hover table-bordered'>
         <thead className='sticky-top'>
           <tr>
@@ -100,6 +114,9 @@ function Table() {
         </tbody>
       </table>
     </div>
+    <Pagination page={queryParameters.page} setPage={page=>setQueryParameters(prev=>({...prev, page}))} rowsPerPage={queryParameters.rowsPerPage} setRowsPerPage={rowsPerPage=>setQueryParameters(prev=>({...prev, rowsPerPage}))} totalRows={mainTableHook?.getResponse?.data?.totalRows} />
+    </>
+    }
   </div>
   )
 }
