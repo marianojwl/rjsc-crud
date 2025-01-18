@@ -9,7 +9,9 @@ function useApiRequest(endpoint, autoFetch=true) {
   const [postResponse, setPostResponse] = useState(null);
   const [putResponse, setPutResponse] = useState(null);
   const [getResponse, setGetResponse] = useState(null);
-
+  const handleFecthError = (e) => {
+    alert('Error de conexión.  No se pudo completar la solicitud.  Verifique su conexión a internet y, si el problema persiste, contacte al administrador del sistema.');
+  };
   const clearPost = () => {
     setPostResponse(null);
   };
@@ -35,7 +37,7 @@ function useApiRequest(endpoint, autoFetch=true) {
         }
       })
       .catch(error => {
-        console.error(error);
+        handleFecthError(error);
         setError(error.message);
       })
       .finally(() => {
@@ -56,7 +58,7 @@ function useApiRequest(endpoint, autoFetch=true) {
         }
       })
       .catch(error => {
-        console.error(error);
+        handleFecthError(error);
         setError(error.message);
       })
       .finally(() => {
@@ -77,7 +79,7 @@ function useApiRequest(endpoint, autoFetch=true) {
         }
       })
       .catch(error => {
-        console.error(error);
+        handleFecthError(error);
         setError(error.message);
       })
       .finally(() => {
@@ -105,7 +107,7 @@ function useApiRequest(endpoint, autoFetch=true) {
         }
       })
       .catch(error => {
-        console.error(error);
+        handleFecthError(error);
         setError(error.message);
       })
       .finally(() => {

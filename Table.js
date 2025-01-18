@@ -8,8 +8,10 @@ import Pagination from './Pagination';
 
 function Table() {
   const {allowFilter, allowSearch, queryParameters, setQueryParameters, endpoint, tables, relations, columns, mainTableHook, selectedRows, setSelectedRows} = React.useContext(ContextCrudApp3);
-  
-  const rows = mainTableHook?.getResponse?.data?.rows;
+
+  const hookResponse = mainTableHook?.getResponse;
+
+  const rows = hookResponse?.data?.rows;
 
   const primaryKeyName = tables[0]?.columns?.find(column => column?.Key === 'PRI')?.Field;
   
@@ -42,6 +44,7 @@ function Table() {
     }
   };
 
+  console.log('hookResponse', hookResponse);
 
   return ( 
   <div>

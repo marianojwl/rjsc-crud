@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-function useRelationHooks(relations, endpoint) {
+function useRelationHooks(relations=[], endpoint) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -10,7 +10,7 @@ function useRelationHooks(relations, endpoint) {
       try {
         const results = await Promise.all(
           relations.map(ref => 
-            fetch( endpoint + '/options/' + ref.ref_table)
+            fetch( endpoint + '&options=' + ref.ref_table)
               .then(response => response.json())
           )
         );

@@ -2,12 +2,11 @@ import React, { useEffect } from 'react'
 import { ContextCrudApp3 } from './Crud'
 import Loading from './Loading';
 import useApi from './useApi';
-import Editor from 'react-simple-wysiwyg';
 
 function Form({isNew=true, closeHandler, reloadMainTable, preFilledFormData=null, callbackOnId=null}) {
   const [data, setData] = React.useState(preFilledFormData);
 
-  const {endpoint, mainTablePrimaryKey, tables, relations, columns, mainTableHook, relationHooks, setSection, selectedRows} = React.useContext(ContextCrudApp3);
+  const {queryFormatter, endpoint, mainTablePrimaryKey, tables, relations, columns, mainTableHook, relationHooks, setSection, selectedRows} = React.useContext(ContextCrudApp3);
 
   const apiGet = useApi(endpoint);
 
@@ -138,7 +137,7 @@ function Form({isNew=true, closeHandler, reloadMainTable, preFilledFormData=null
                           name={field} 
                           checked={data[field] || false} 
                           disabled={column?.Key === 'PRI'}
-                          required={required}
+                          required={false}
                           onChange={(e)=>setData({...data, [field]:e.target.checked})} 
                         />
                       </div>

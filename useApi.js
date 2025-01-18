@@ -4,7 +4,9 @@ function useApi(endpoint) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [response, setResponse] = useState(null);
-
+  const handleFecthError = (e) => {
+    alert('Error de conexión.  No se pudo completar la solicitud.  Verifique su conexión a internet y, si el problema persiste, contacte al administrador del sistema.');
+  }
   const get = async (query) => {
     try {
       setLoading(true);
@@ -18,7 +20,7 @@ function useApi(endpoint) {
       setResponse(data);
       return data;
     } catch (error) {
-      console.error(error);
+      handleFecthError(error);
       setError(error.message);
     } finally {
       setLoading(false);

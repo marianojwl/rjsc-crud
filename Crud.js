@@ -7,7 +7,7 @@ import Form from './Form';
 
 export const ContextCrudApp3 = React.createContext();
 
-function Crud({queryFormatter=null, order="ASC", orderBy=null, allowFilter=true, allowSearch=false, endpoint, tables, relations, columns, startOn='table', newFormPrefilledData={}, newFormCallbackOnInsertId=null,  overrideFormCloseHandler=null}) {
+function Crud({queryFormatter=null, order="ASC", orderBy=null, allowFilter=true, allowSearch=false, endpoint, tables, relations=[], columns, startOn='table', newFormPrefilledData={}, newFormCallbackOnInsertId=null,  overrideFormCloseHandler=null}) {
   
   const mainTablePrimaryKey = tables[0]?.columns.find(col => col?.Key === 'PRI')?.Field;
 
@@ -15,7 +15,7 @@ function Crud({queryFormatter=null, order="ASC", orderBy=null, allowFilter=true,
 
   const [queryParameters, setQueryParameters] = React.useState({page:1, rowsPerPage:20, orderBy:(orderBy??(mainTableName+'.'+mainTablePrimaryKey)), order:order, search:''});
 
-  const queryString = (queryFormatter ? queryFormatter(queryParameters) : (qp=>{ return "?" + Object.keys(qp).map(k=>k+"="+qp[k]).join("&") })(queryParameters));
+  const queryString = (queryFormatter ? queryFormatter(queryParameters) : (qp=>{ return "&" + Object.keys(qp).map(k=>k+"="+qp[k]).join("&") })(queryParameters));
 
   const mainTableHook = useApiRequest(endpoint, false);
 
@@ -31,8 +31,9 @@ function Crud({queryFormatter=null, order="ASC", orderBy=null, allowFilter=true,
 
   const [editFormPrefilledData, setEditFormPrefilledData] = React.useState({});
 
-  return ( (!endpoint || !tables?.length || !relations || !columns) ? <div>Bad Configuration</div> :
-    <ContextCrudApp3.Provider value={{allowFilter, allowSearch, queryParameters, setQueryParameters, endpoint, editFormPrefilledData, setEditFormPrefilledData, mainTablePrimaryKey, endpoint, tables, relations, columns, mainTableHook, relationHooks, setSection, selectedRows, setSelectedRows}}>
+  return ( (!endpoint || !tables?.length || !relations || !columns) ? <div className='alert alert-danger'>Bad Configuration</div> :
+    !mainTableHook?.loading && mainTableHook?.getResponse ===null ? <div className='alert alert-warning'>Error de Conexión</div> :
+    <ContextCrudApp3.Provider value={{queryFormatter, allowFilter, allowSearch, queryParameters, setQueryParameters, endpoint, editFormPrefilledData, setEditFormPrefilledData, mainTablePrimaryKey, endpoint, tables, relations, columns, mainTableHook, relationHooks, setSection, selectedRows, setSelectedRows}}>
       <div className='CrudApp3'>
         { section === 'table' && <><ActionBar /><Table /></> }
         { section === 'new-form' && <><Form callbackOnId={newFormCallbackOnInsertId} preFilledFormData={newFormPrefilledData} reloadMainTable={mainTableHook.fetchData} closeHandler={()=>setSection('table')} /></> }
